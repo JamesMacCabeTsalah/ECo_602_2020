@@ -27,9 +27,9 @@ hist(pen_boot,
      xlab = "Difference in mean Flipper Length (mm) of Adelie and Chinstrap Penguins",
      breaks = 7)
 # --- --- --- --- --- --- --- --- --- --- #
-vegdata = read.csv(here::here("data", "vegdata.csv"))
+veg = read.csv(here::here("data", "vegdata.csv"))
 
-dat_tree = droplevels(subset(vegdata, treatment %in% c("control", "clipped")))
+dat_tree = droplevels(subset(veg, treatment %in% c("control", "clipped")))
   #  %n% : 
 
 length(subset(dat_tree, treatment == "clipped"))
@@ -47,7 +47,7 @@ length(subset(dat_tree, treatment == "control"))
 
 # quantile(x, CI%)
 
-# ---- Resampling_Linear_Regression ----
+# ---- Resampling_Simple_Linear_Regression ----
 
 dat_bird = read.csv(here::here("data", "bird.sub.csv"))
 dat_habitat = read.csv(here::here("data", "hab.sub.csv"))
@@ -102,7 +102,7 @@ dat_1 =
     dat_all,
     select = c(b.sidi, s.sidi)) # select indicates columns to select from a data frame
 
-# (2) Create Monte Carlo Variables - We can create two vectors of randomly generated row indices  
+# (2) Create Monte Carlo Variables - We can create two vectors of randomly generated row indices ***
 index_1 = sample(nrow(dat_1), replace = TRUE)
 index_2 = sample(nrow(dat_1), replace = TRUE)
 
@@ -128,7 +128,7 @@ plot(
 abline(fit_resampled_i) #abline is now based on Monte Carlo trendline
 }
 
-# ---- Randomization_Loop ----
+# ---- MC_Randomization_Loop ----
 
 m = 10000 
 result = numeric(m) # we can pre-allocate a vector to hold the results using numeric()
@@ -165,7 +165,7 @@ abline(v = slope_observed, lty = 2, col = "red", lwd = 2)
 
 # ---- Critical_Slope_Value ----
 
-quantile(result, c(.05))
+quantile(result, 0.05)
 
 # Do you remember what the observed slope of the real data was?
   
@@ -190,11 +190,78 @@ pen_ecdf(0)
 # ---- Q6 ----
 wilcox.test(pine ~ treatment, data = dat_tree, alternative = "two.sided")
 # ---- Q7 ----
+# Use two.boot() to create a bootstrapped data set of the differences in mean tree count between the clipped and control treatments.
+veg = read.csv(here::here("data", "vegdata.csv"))
+dat_tree = droplevels(subset(veg, treatment %in% c("control", "clipped")))
 
+tree_boot = 
+  two.boot(
+    subset(dat_tree, treatment == "clipped")$pine,
+    subset(dat_tree, treatment == "control")$pine,
+    FUN = mean,
+    R = 10000,
+    na.rm = TRUE
+  )
+
+# Use quantile() to find a 95% CI.
+quantile(tree_boot$t, 0.95)
+
+# Q7.1: what is an endpoint???
+# Q7.2: ???
+  
 # ---- Q8 ----
+# Code a loop to resample the slope parameter of a simple linear regression of the Simpson’s diversity indices for vegetation and birds.
+
+# Setup Data
+dat_bird = read.csv(here::here("data", "bird.sub.csv"))
+dat_habitat = read.csv(here::here("data", "hab.sub.csv"))
+dat_all = merge(
+  dat_bird, 
+  dat_habitat,
+  by = c("basin", "sub")) 
+
+
+
+
+
+
+# ??????????????????????????
 
 # ---- Q9 ----
-
+{
+  # Extract just the two variables we need for this exercise
+  dat_1 = 
+    subset(
+      dat_all,
+      select = c(b.sidi, s.sidi)) # select indicates columns to select from a data frame
+  
+  m = 10000 
+  result = numeric(m) # we can pre-allocate a vector to hold the results using numeric()
+  
+  for(i in 1:m)
+  {
+    # (1) Create Monte Carlo Variables - We can create two vectors of randomly generated row indices  
+    index_1 = sample(nrow(dat_1), replace = TRUE)
+    index_2 = sample(nrow(dat_1), replace = TRUE)
+    
+    # (2) Then we can use these to create two new vectors of bird and vegetation diversity indices.
+    dat_resampled_i = 
+      data.frame(
+        b.sidi = dat_1$b.sidi[index_1],
+        s.sidi = dat_1$s.sidi[index_2]
+      )
+    
+    fit_resampled_i = lm(b.sidi ~ s.sidi, data = dat_resampled_i)
+    result[i] = coef(fit_resampled_i)[2] # [2] sources the slope intercept, while [1] sources the y-intercept 
+  } 
+}
 # ---- Q10 ----
+quantile(result, 0.05)
+# Q10.1.1: Critical Value = -0.0132565
+# Q10.1.2: The observed slope of ____ was ____ than the critical value of -0.0132565
+
+# Q10.2: My conclusion is that
+
+
 
 

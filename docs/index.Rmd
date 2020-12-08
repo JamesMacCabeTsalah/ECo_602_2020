@@ -1,30 +1,1067 @@
 ---
 title: "Eco 602 Final Project"
 author: "James Tsalah"
-date: "10/15/2020"
-output: html_document
+date: "12/4/2020"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
 ---
+https://michaelfrancenelson.github.io/eco_602_634_2020/assignments/eco_602/individual/eco_602_final_proj.html
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+# Data Structure Functions {.tabset .tabset-pills}
+## Vectors {.tabset .tabset-pills}
+
+A vector is a 1D data structure consisting of one or more elements
+
+In a vector, all of the elements must be of the same type. I've listed the basic ones below, but there are more such as Complex and Raw that aren't relevant for this course.
+
+- Characters = Letters
+  
+- Decimal Values = Numerics
+  
+- Natural Numbers = Integers
+
+  - integers are also Numerics
+    
+- Logical = Boolean Values (TRUE/FALSE) 
+
+### Creating Vectors
+Vectors can be generated using the c() function, which compiles the data you put into it as a vector - so long as it's all the same data type!
+
+For example:
+``` {r c()}
+# Numeric Vector
+num_vec = c(1.5, 2.4, 3.3, 4.2, 5.1)
+
+# Integer Vector
+int_vec = c(1:5)
+  #  Integers are a subset of numerics, so unless you use : or print L in front of a number - it will likely be classified as a numeric unless specified even if it's a whole number.
+
+# Character Vector
+char_vec = c("how", "are", "you", "doing", "Michael?")
+
+# Logical Vector
+bool_vec = c(TRUE, TRUE, TRUE, FALSE, FALSE)
 ```
 
-## R Markdown
+We can check our data types using the class() function!
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+``` {r class()}
+class(num_vec)
+class(int_vec) 
+class(char_vec)
+class(bool_vec)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+And finally we can easily find how long they are by using the appropriately named length() function.
+``` {r}
+length(num_vec)
+length(int_vec)
+length(char_vec)
+length(bool_vec)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+### 1D Selection
+To select elements of a vector, you can use square brackets [#] 
+
+For example, if I wanted to select the first value in num_vec, I'd use [1]:
+``` {r brackets_1}
+num_vec[1] 
+# 1.5 is the first value in the num_vec vector
+```
+
+To select multiple data points in a vector, use [c(x,y,z…)]
+
+For example, if I want to select the first, third and fifth value in num_vec, I'd use [c(1,3,5)] as shown below.
+
+``` {r brackets_2}
+num_vec[c(1,3,5)]
+# These are the associated values given the coordinates provided
+```
+
+You can also use brackets to specify elements using ANOTHER VECTOR!
+
+For example, if I wanted to select all of the num_vec values that correspond to the positions of TRUE in bool_vec, I'd write:
+``` {r brackets_3}
+num_vec[bool_vec[TRUE]]
+# The positions in bool_vec that are TRUE are positions 1, 2 and 3. 
+# These correspond to the values in num_vec 1.5, 2.4 and 3.3 because they are in position 1, 2 and 3 respectively.
+```
+
+### Vector Math
+If you have a dataset embedded in a vector, you can do a calculation on that dataset using another vector (and in the process make a new vector)
+
+``` {r calc_vec}
+calc_vec = num_vec * 5 
+calc_vec
+# All of the values were multiplied by 5!
+```
+
+## Matrices {.tabset .tabset-pills}
+
+A Matrix is a collection of elements of the SAME data type arranged into a fixed number of rows and columns, and can be created using the matrix() function.
+
+### Creating Matrices
+The general structure of a matrix is as follows.
+
+matrix(“data_vector”, byrow = , nrow = , ncol = )
+
+- byrow: indicates that the matrix is filled by
+
+  - TRUE = rows
+  
+  - FALSE = columns
+   
+- nrow: indicates how many rows the matrix should have
+  
+- ncol: indicates how many columns the matrix should have
+
+For example:
+``` {r matrix()}
+int_matrix = matrix(c(1:5, 11:15, 21:25, 31:35, 41:45, 51:55), 
+                    byrow = TRUE, # filled by rows
+                    nrow = 6, # 6 rows
+                    ncol = 5) # 5 columns
+int_matrix
+```
+
+### Matrix Math
+You can do easy calculations and normal math to entire matrices! 
+
+- +,-,/,*,^…
+
+- col/rowSums(name_of_matrix): calculates the totals for each column/row of a matrix - creating a new vector 
+
+``` {r matrix_math}
+int_matrix + 5
+int_matrix - 5
+int_matrix * 5
+int_matrix / 5
+int_matrix^5
+rowSums(int_matrix)
+colSums(int_matrix)
+```
+
+### Matrix Merging 
+You can merge matrices and/or vectors together by row or column via r/cbind()
+
+``` {r r/cbind()}
+# Lets make a matrix to rbind() to our int_matrix
+int_matrix_rbind = matrix(c(61:65, 71:75, 81:85, 91:95), 
+                      byrow = TRUE, 
+                      nrow = 4, 
+                      ncol = 5)
+
+# rbind() int_matrix and int_matrix_2 to get a 5x10 grid with values 1-50
+int_matrix_rbound = rbind(int_matrix, int_matrix_rbind)
+
+int_matrix_rbound
+```
+
+``` {r r/cbind()_2}
+# Lets make another matrix to cbind() to our new int_matrix_rbind
+int_matrix_cbind = matrix(c(6:10, 16:20, 26:30, 36:40, 46:50, 
+                        56:60, 66:70, 76:80, 86:90, 96:100), 
+                      byrow = TRUE, 
+                      nrow = 10, # you have to have matching row dimensions
+                      ncol = 5)
+
+# cbind() int_matrix_rbind to int_matrix_3
+int_matrix_rcbound = cbind(int_matrix_rbound, int_matrix_cbind)
+
+# The final matrix counts to 100!
+int_matrix_rcbound
+```
+
+### Matrix Naming
+To name rows and columns, you can specify them using the row/colnames() functions
+
+- rownames(matrix) = "row_name"
+  
+- colnames(matrix) = "column_name"
+  
+- Create a vector with sequential names in order from top to bottom / left to right
+
+``` {r row/colnames()}
+# Names Rows
+row_names = c("R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10")
+rownames(int_matrix_rcbound) = row_names
+
+# Names Columns
+col_names = c("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10")
+colnames(int_matrix_rcbound) = col_names
+
+# I usually save labeling for last because if not, you may have dimension problems when running your code again.
+
+int_matrix_rcbound
+```
+
+### 2D Selection
+Doing selections with matrices becomes more complicated, as you must now select parts of a 2D matrix.
+
+- Example: new_vector <- matrix_name[Row,Column]
+
+- Individual Selections
+
+  - [x,] = only row
+  
+  - [,x] = only column
+  
+``` {r selection}
+# To select the single value 50, you have to select the row (5) and the column (10)
+int_matrix_rcbound[5,10]
+
+# To select a singe row across all columns, use [x,]
+int_matrix_rcbound[5,]
+
+# To select a single column across all rows, use [,x]
+int_matrix_rcbound[,10]
+```
+  
+### dim()
+
+To easily find out the dimensions of your matrix, you can use the dim() function to gives you the height and width of your matrix! This works with more than just matrices, but the syntax is so intuitive that you can apply this in the same way.
+
+Simply input your matrix or other compatible r data type into dim() and you're all set!
+
+``` {r}
+# int_matrix_rcbound is 10x10, so it's not the best example haha
+# Lets dim() int_matrix_cbind
+int_matrix_cbind
+dim(int_matrix_cbind)
+```
+
+Notice how r outputs the height, and then length. int_matrix_cbind is 10 high and 5 long, thus the output 10 5
+
+## Data Frames {.tabset .tabset-pills}
+
+Data Frames are a large, versitile form of data storage that have the variables of a data set as columns, and the observations as rows, This allows you to compile vectors of DIFFERENT data types into a singular data frame without any data type conflict!
+
+Data frames are a type of list, but they have a few restrictions under the umbrella term.
+
+- all elements of a data frame have an equal length
+
+- all elements of a data frame are vectors
+
+- you can't use the same name for two different variables
+
+A data frame is but a subset of data structures underneath the umbrella of lists!
+
+### Creating Data Frames
+Data frames can easily be made with the appropriately named data.frame() function, followed by simply inserting the data you want to synthesize your dataframe with one by one within the parenthesis. 
+
+``` {r data.frame()}
+dat_vec = data.frame(num_vec, int_vec, char_vec, bool_vec)
+dat_vec
+```
+
+### subset()
+
+The subset function shines the most with data frames because of how intutivie it is to take a data frame comprising of multiple constituents and strip it down to the bare bones of what you need. This is essentially reverse engineering the synthesis of the data frame using the subset() function!
+
+For example, if you wanted to subset all of our data to just be the bool_vec values that are TRUE, we can do the following!
+
+``` {r subset()}
+dat_vec_TRUE = subset(dat_vec, bool_vec == TRUE)
+dat_vec_TRUE
+```
+
+This returns a data frame that only contains the values associated with bool_vec == TRUE!
+
+### $
+
+$ is a shorthand for [[]], which we will discuss in more detail in the Lists tutorial, but essentially this allows us to easily grab just the part you want from the data for use in whatever your heart desires. 
+
+If we wanted to isolate num_vec, int_vec and char_vec from our subsetted dat_vec_TRUE data frame - we can do so easily by using the following syntax.
+
+- data.frame$object
+
+```{r}
+# $num_vec to grab just the num_vec column
+dat_vec_TRUE$num_vec
+
+# $int_vec to grab just the int_vec column
+dat_vec_TRUE$int_vec
+
+# $char_vec to grab just the char_vec column
+dat_vec_TRUE$char_vec
+```
+
+## Lists
+
+Lists are a collection of elements without any restriction on the class, length or structure of each element. But like we saw in data frames, you can't give two elements the same name! 
+
+Lists can be created using the function list(), but they operate in slightly different ways than 2D data structures. Lists are like a hub of different elements, including other lists if you so desire! But because of this, you can't access lists in the same way that you would with a 2D matrix or data frame. 
+
+We've been using brackets to pin down data throughout this tutorial, but there is a minute distinction that must be made with single and double brackets when subsetting. 
+
+- [ always returns a list class type
+
+- [[ selects an element within a list while retaining the original class type
+
+  - $ is a convenient shorthand! x$y is equivalent to x[["y"]]! 
+
+``` {r []&[[]]}
+# Lets create a list
+list_vec = list(num_vec, int_vec, char_vec, bool_vec)
+
+# A single bracket [] will not return the element in its original data type, but as a list
+list_vec[2]
+
+# This is shown if you use the class() function we used earlier!
+  # This is good to note if you are trying to input a list element into a data structure that requires homogeneity! ***
+class(list_vec[2])
+
+
+# To select an entire element within a list, and retain it's class type - use [[]] 
+list_vec[[2]] # if you open the list, it is the second element within the list = [[2]]
+```
+
+# Distribution Functions {.tabset .tabset-pills}
+
+The two most commonly used distribution functions are the Normal and Binomial distributions - and they can be easily used in R with a few general rules of thumb!
+
+They can come in the following forms:
+
+Note: Density refers to a continuous data, while Mass refers to a binomial data!
+
+d = Probability Density/Mass Function (PDF/PMF)
+
+- PDF/PMF is the y-value of the probability density curve for a given value of x
+  - You can think of it as the height of a curve
+
+p = Cumulative Density/Mass Function (CDF/CMF)
+
+- CDF/CMF represents the probability that a variable X is less than or equal to a particular value of x 
+
+- This is essentially the accumulated area under the curve to the left of x, which = ∫
+<br>
+
+PD/MF vs. CD/MF: The PDF/PMF is the derivative of the CDF/CMF - and the CDF/CMF is the integral of the PDF/PMF! 
+<br>
+
+q = Quantile Function ≈ Inverse Cumulative Density/Mass Function
+
+- The quantile function is the inverse function of the CDF/CMF
+
+  - You switch the axis!
+  
+    - x = Probability of observing a value <= x
+    
+    - y = dependent variable 
+    
+- This tells us what the specified x-value is at a given probability!
+
+r = Random
+
+- Generates random points in the distribution you specified!
+
+## Normal {.tabset .tabset-pills}
+
+d/p/q/rnorm() = Normal Distribution
+
+### dnorm()
+
+PDF - Probability Density Function
+
+Using the PDF, we can calculate the probability density for any specified value of x given the mean and standard deviation. This essentially indicates the likelihood of an event or outcome at a specific point on the normal shape bell curve.
+
+For example, if we wanted to know the probability of an American man being 72 inches tall (6'), when the mean height is 69 inches (5', 9") and the standard deviation is 3", we can input the following into our syntax!
+
+``` {r}
+dy = dnorm(72, mean = 69, sd = 3)
+dy
+```
+
+The output means that there is a probability of ~8% that an American man is 6' tall. Because of the shape of the bell curve, values close to the mean will have a relatively high probability, and values far from the mean will have a relatively low probability. 
+
+### pnorm()
+
+CDF - Cumulative Density Function
+
+CDF represents the probability that a particular variable is less than or equal (≤)to a particular value of x. So for a particular distribution with a specified mean and standard deviation, the CDF represents the chance of observing values ≤ the specified value.
+
+Here is the syntax:
+
+- pnorm(specified value, mean, sd = standard deviation)
+
+  - This outputs Pr(x ≤ Specified Value)
+  
+For example, if we wanted to know the probability of an American man being shorter than 72 inches tall (6'), when the mean height is 69 inches (5', 9") and the standard deviation is 3", we can input the following into our syntax!
+
+``` {r}
+py_below = pnorm(72, mean = 69, sd = 3)
+py_below
+```
+
+This means that there is approximately an 84% chance of a male being less than 6' tall!
+
+But what if we want to find out the opposite - what is the chance of a male being over 6' tall?
+
+This can easily be found by adding one specification to our code, as just by adding 'lower = FALSE', we can specify that we don't want to look at the CDF below the value, but actually above the value. This is equivalent to doing 100 - ~84 = ~16%. You will see this in the code below!
+
+``` {r}
+py_above = pnorm(72, mean = 69, sd = 3, lower = FALSE)
+py_above
+```
+
+### qnorm()
+
+qnorm() - Quantile Function ≈ Inverse Cumulative Density Function
+
+qnorm() is the opposite side of the coin for pnorm(), because pnorm() requires the x-value and outputs the p-value while qnorm() requires the p-value and outputs the associated x-value. In our height example, pnorm(72, mean = 69, sd = 3) output 0.8413447. So if we the input the vector py_below (which we stored the pnorm() output in) into qnorm() with the same mean and standard deviation - we will get the x-value we specified in our pnorm() script of 72"! 
+
+``` {r}
+qy = qnorm(py_below, mean = 69, sd = 3)
+qy
+```
+
+### rnorm()
+
+rnorm() - Random Normal Distribution
+
+rnorm() generates a random normal distribution based on the given data. 
+
+Heres the skeleton:
+
+- rnorm_x = rnorm(x = number of data points to simulate, mean, sd = standard deviation)
+
+``` {r}
+u = 10
+sd = 2
+
+set.seed(123) # this makes sure that whenever I run rnorm_30 in a new session, it will always be the same output!
+rnorm_30 = rnorm(30, mean = u, sd = sd)
+rnorm_30
+```
+
+We just created 30 random normally distributed points based on our mean of 10 and standard deviation of 2!
+
+This works essentially the same way with both the Binomial and Poisson distributions!
+
+## Binomial {.tabset .tabset-pills}
+
+d/p/q/rbinom() = Binomial Distribution = Bernoulli Distribution
+
+~ The Bernoulli process produces a binary outcome, yes or no, 0 or 1... ~
+
+- A realization of the Bernoulli process is called a trial
+Bernoulli Trial
+
+  - For example, flipping a coin is one realization with ~50/50 chance of heads or tails
+
+
+- A Binomial Process is a collection of independent Bernoulli trials
+
+  - Assumes each Bernoulli trial has the same probability of success *** 
+
+
+Binomial has two parameters: n and p 
+
+- n = number of trials / observations
+
+- p = probability of success in an individual trial 
+
+Basic Syntax: _binom(x = number of successes, size = number of trials, prob = probability of success...)
+
+- lower.tail = TRUE by default = probabilities are ≤ x
+
+  - if FALSE they are > x
+
+  - (Works the same as the normal distribution syntax we used before!)
+
+### dbinom()
+
+PMF - Probability Mass Function
+
+For a discrete distribution, the PMF represents the probability that the outcome of a set of observations is equal to a particular value x. This is near identical to the PDF, except we are working with discrete binomial data instead of continuous data. 
+
+We can calculate the probability of any specified number of successes given the number of trials and the probability of success for each trial. Though the syntax is a little different than dnorm().
+
+For example, if you wanted to know the probability of rolling a 20 on a d20 5 times in a DnD  session where you roll a total of 20 times - you can find this by specifying the following in dbinom().
+
+``` {r}
+PMF_roll_d20_5 = dbinom(x = 5, size = 20, prob = 0.05)
+PMF_roll_d20_5
+```
+This means you have a 0.2% probability of rolling a 20 on a d20 5 times during your DnD session where you rolled a total of 20 times.
+
+You can also input a range, so if you wanted to consider 3 to 5 d20 20 rolls - you can input 3:5 and r will output 3 separate probability values.
+
+``` {r}
+PMF_roll_d20_345 = dbinom(x = 3:5, size = 20, prob = 0.05)
+PMF_roll_d20_345
+```
+
+Generally speaking, the less successes you demand and the more trials you have - the higher the probability of observing that many successes!
+
+### pbinom()
+
+CMF - Cumulative Mass Function
+
+This combines the same concept from what we learned with the normal CDF, only with the syntax of what we just learned with binomial dbinom() PMF! This is the binomial variant of the CDF, but it does exactly the same thing - it gives you an output of the the cumulative probability of observing values ≤ a specified x-value! 
+
+In our PMF d20 example, we asked what the probability of rolling 5 20s on a d20 during a DnD session where we rolled our die 20 times. The PMF gave us this value, but if we were to plug this into a CMF it would tell us what the probability of observing ≤ 5 20s instead of 5 total!
+
+Note: The only thing we are changing here is the function - we are merely going from dbinom to pbinom!
+
+``` {r}
+CMF_roll_d20_5 = pbinom(5, size = 20, prob = 0.05)
+CMF_roll_d20_5
+```
+
+This means that there is a 99.96707% probability of getting at 5 or less 20s when rolling a d20 20 times!
+
+### qbinom()
+
+qbinom() - Quantile Function ≈ Inverse Cumulative Mass Function
+
+Like the normal Inverse Cumulative Density Function, the binomial Inverse Cumulative Mass Function works very similarly! This is unfortuantely not as useful as the inverse CDF, but it still has a niche use if you need to find out the amount of successes given a probability you know. 
+
+In our d20 example, we had a 99.96707% probability of observing 5 or less 20s if we rolled a d20 20 times, so the quantile function will inversely determine an output of 5 if input this probability. We can see this clearly in the code below that mimics the syntax of the inverse CDF but with binomial specifications of size and probability.
+
+``` {r}
+QF_roll_d20_5 = qbinom(0.9996707, size = 20, prob = 0.05)
+QF_roll_d20_5
+```
+This means that given theres a 99.96707% probability of observing a trial, 5 or less successful 20s are probable to occur given you roll the d20 20 times. Not very useful but cool nonetheless...
+
+# Installing Packages and Reading .csv Files 
+
+Lets start by downloading our data!
+
+- https://michaelfrancenelson.github.io/eco_602_634_2020/data/delomys.csv
+
+In order to read a .csv file, we can use the 'here' package in order to easily access files stored in our directory. You can use read.csv() along with the path to the file to read the data into a 2D data.frame using this method.
+
+You will need to install the 'here' package using the install.packages() function, and use either library(here) or require(here) to access it in order to access your data. In order to use the here package, you must know where your working directory is located. This can be set (or is already set) when you make an R-Project in R-Studio, but can also be found using the script getwd(). In my ECo_602_2020 folder I store all of my data within a folder named "data", and from there I can easily access any downloaded data I have.
+
+- package::code()... is another way to access a specific package function without using library() or require()
+
+If you cannot get this work, you can simply use the download link to the data within quotations to achieve the same goal.
+
+Here's an example using data collected on two species of small mammals in the Atlantic Forest of Brazil, which is stored as a .csv file named delomy.csv!
+
+```{r read_delomy_data}
+# getwd() tells you the path to your working directory
+getwd()
+
+# Install the package 'here'
+# install.packages("here)
+
+# Load the package using library() or require() - I prefer require() because it's faster
+require(here) 
+
+# Read the .csv file using the read.csv function
+delomys = read.csv(here("data", "delomys.csv"))
+
+# or 
+
+delomys = read.csv(here::here("data","delomys.csv"))
+  # here::here embeds require(here) into the script!
+  # format = package::code() 
+
+# You can also alternatively use a link within quotations to get the same thing done!
+delomys_link = read.csv("https://michaelfrancenelson.github.io/eco_602_634_2020/data/delomys.csv")
+```
+
+# Numerical Data Exploration {.tabset .tabset-pills}
+
+Once you've read your data, doing a numerical data exploration can give you insight on basic statistical calculations for your dataset. In statistics we are commonly working with mean and standard deviation in some form or another, and these can be easily found using the mean() and sd() functions. 
+
+## Previewing the Data
+
+Firstly, to get a general sense of what your data looks like you can use the head() function to print the first few lines of a data frame! 
+
+Here's an example with the delomy data:
+
+```{r head()}
+head(delomys)
+```
+
+## Mean
+
+To calculate something simple like the mean of a variable (column), we can use the mean() function alongside some subsetting techniques we used earlier!
+
+```{r mean()}
+# For example, to calculate the mean of the body_length variable we can subset delomys using $ 
+mean(delomys$body_length)
+```
+
+## Standard Deviation
+
+To calculate the standard deviation of a variable (column), we can use the sd() function with the same syntax we used for the mean() function!
+
+```{r sd()}
+sd(delomys$body_length)
+```
+
+## Summary
+
+A general summary of your data can be useful to get a set of descriptive statisticsor for every variable, depending variable type of course. This can be total number of observations, amount of NA observations, quartile data and more for each variable!
+
+Here's an example with the delomy data:
+
+```{r summary()}
+summary(delomys)
+```
+
+This is a bit crowded, so we can subset using $ to pick out body_mass and body_length individually!
+
+```{r summary($)}
+summary(delomys$body_mass)
+```
+
+```{r summary($)2}
+summary(delomys$body_length)
+```
+## Shapiro Test
+
+A Shapiro test is testing for whether or not your data is normally distributed - which is a fundamental assumption for tests such as the  Student t-test and ANOVA tests. 
+
+The null hypothesis of the test is that “the data are drawn from a normally-distributed population", while the alternative hypothesis is that they aren't drawn from a normally-distributed population.
+
+For our numerical analysis, we can try this test out on the delomys body_mass and body_length
+
+``` {r shapiro.test()}
+shapiro.test(delomys$body_mass)
+
+shapiro.test(delomys$body_length)
+```
+
+Both output very small p-values, meaning that the null hypothesis is rejected and we can say that this data is likely not normally distributed. We can now continue to look at our data graphically to get a better sense of what our data is showing us. 
+
+# Graphical Data Exploration {.tabset .tabset-pills}
+
+Using plot(), hist() and boxplot() - we can explore data and gain meaningful insight as to what steps are most logical considering the output. 
+
+To begin, plots can be generated using the plot() function along with a bounty of customizable output specifications that can (for the most part) be used across all the functions described in this project and beyond. To generally outline, graphical specifications will be predominantly these 8 descriptors.
+
+    col = color
+    
+    pch = plot character = values 0-20
+      
+    - Each value between 0-20 has an associated character symbol to use for points
+    
+    cex = a number to scale the size of points from the default
+    
+    main = "Title of Graphical"
+    
+    xlab = "X-Axis Label"
+    
+    ylab = "Y-Axis Label"
+    
+    xlim = "X-Axis Upper Numerical Limit" = c(lower limit, upper limit)
+    
+    ylim = "X-Axis Upper Numerical Limit" = c(lower limit, upper limit)
+
+Lets look at plots, pairplots, histograms, and boxplots  
+
+## plot()
+``` {r plot()}
+plot(delomys$body_length ~ delomys$body_mass,
+     col = "red", # r has a bounty of default colors you can use
+     pch = 9, # You can find a chart online of all the other options too, I just chose 9 at random :3
+     cex = 0.7, # point scaled by 0.7
+     main = "Delomy Body Mass vs. Body Length",
+     xlab = "Delomys Body Mass (g)",
+     ylab = "Delomys Body Length (cm)",
+     xlim = c(0,100),
+     ylim = c(0,300))
+```
+
+Plots are really useful, but if we want to make plots for an entire data frame it can get tedious to work with each one. That is where pairplots come in, which makes a plot for every combination of variables in a dataframe - and puts it into one output.
+
+To make aesthetically pleasing pair plots, we can use the psych package! You will need to install this package using install.packages(psych), and use either library(psych) or require(psych) to access it in order to make a nice pairplot using it's pairs.panels() function! You can simply insert the dataset you want to pairplot into pair.panels() and psych takes care of the rest!
+
+## hist()
+
+Histograms are one of the most useful tools to easily check if your data is normal or skewed! Though sometimes the histogram r makes by default has unideal x-dimensions and what is called 'breaks'. 
+
+Breaks essentially dictate the start and end values for grouping your data, called a 'bin', which can be done in a few ways. 
+
+- You can simply decide to group based on dividing the dataset by breaks = x amount of times
+  
+  - Note: Sometimes r will not take too kindly to the # of divisions you chose, and will typically just output the default histogram like an oaf
+
+- You can use a vector or c() to dictate exactly the start and end point of each bin
+
+Note: BREAKS DO NOT NECESSARY CHANGE THE XLIM
+
+- r will modify the xlim to fit the breaks accordingly, but sometimes you can get some data hanging off the edge unaccounted for by the x-axis which is not great
+
+
+``` {r fig.width = 10}
+hist(delomys$body_mass)
+# The default histogram has hanging bars past 100 which is icky, so we can try to fix it with breaks
+
+# It's logical to divide a dataset into break bins based on smooth numbers, so we can use length() to determine how long it is and divide by a nice number
+length(delomys$body_mass)
+# The output is 1585, which is cleanly divisible by 5! 
+
+par(mfrow = c(1,3)) # don't worry I'll get to how to use this function soon!
+hist(delomys$body_mass,
+     main = "Delomy Body Mass (g): Breaks = 5",
+     xlab = "Delomys Body Mass (g)",
+     breaks = 5)
+# or
+hist(delomys$body_mass,
+     main = "Delomy Body Mass (g): Breaks = c(...)",
+     xlab = "Delomys Body Mass (g)",
+     breaks = c(0,20,40,60,80,100,120)) # I grouped the data in intervals of 20
+
+# Notice that this isn't the same as expanding the xlim, which adjusts breaks on it's own!
+hist(delomys$body_mass,
+     main = "Delomy Body Mass (g): xlim = c(0,120)",
+     xlab = "Delomys Body Mass (g)",
+     xlim = c(0,120))
+```
+
+``` {r}
+# We can now look at our body_length and fix it up!
+hist(delomys$body_length)
+# We're getting some extreme overhang, so we can fix this up using what we just learned!
+par(mfrow = c(1,2))
+hist(delomys$body_length,
+     main = "Delomy Body length (cm)",
+     xlab = "Delomys Body Length (cm)",
+     breaks = 5)
+# or
+hist(delomys$body_length,
+     main = "Delomy Body length (cm)",
+     xlab = "Delomys Body Length (cm)",
+     breaks = c(0,50,100,150,200,250,300))
+```
+
+You can use much more complicated breaks using seq() and other functions, but generally these basics will be enough to carry you in most projects!
+
+## boxplot()
+
+Boxplots can be generated using boxplot(), and customized with the global indicators described previously.
+
+The most simple boxplot() is made with a single response variable without any conditioning based on categorical variables. This is a non-discriminatory method of looking at data generally without specifying other variables that may allude to more detailed outcomes. 
+
+``` {r simple boxplot()}
+boxplot(delomys$body_mass,
+        xlab = "Delomy spp.",
+        ylab = 'Body Mass (g)',
+        main = "Boxplot of Body Mass of Delomys spp.")
+```
+
+Conditional boxplots condition a response variable based on a categorical variable. For example, the delomys dataset has categorical variables such as sex and species which effect body mass - and can even be seen to have a synergistic effect when combined. 
+
+```{r conditional boxplot()}
+# Conditional boxplot of body mass grouped by species.
+boxplot(delomys$body_mass ~ delomys$binomial, 
+        xlab = 'Species',
+        ylab = 'Body Mass (g)',
+        main = "Boxplot of Body Mass by Species of Delomys spp.")
+
+# Conditional boxplot of body mass grouped by sex
+boxplot(delomys$body_mass ~ delomys$sex,
+        xlab = 'Sex',
+        ylab = 'Body Mass (g)',
+        main = "Boxplot of Body Mass by Sex of Delomys spp.")
+```
+
+``` {r fig.width = 3.5}
+# Conditional boxplot of body mass grouped by species and sex.
+boxplot(delomys$body_mass ~ delomys$binomial * delomys$sex,
+        names = c("Female D. dorsalis", "Male D. dorsalis",
+                  "Female D. sublineatus", "Male D. sublineatus"),
+        xlab = "Species and Sex",
+        ylab = "Body Mass (g)",
+        main = "Boxplot of Body Mass by Species and Sex of Delomys spp.")
+```
+
+## par()
+
+To organize multiple graphical outputs into a single image, we can use par() in order to format any graphical outputs that come after it! The format looks like this: 
+
+  par(mfrow = c(number of rows, number of columns))
+
+  plot(...)
+
+  hist(...)
+
+  boxplot(...)
+
+``` {r fig.asp = 2}
+# Lets organize the boxplots we just made to show how the data change as we increasingly condition body mass!
+{
+par(mfrow = c(3,1))
+boxplot(delomys$body_mass ~ delomys$binomial, 
+        xlab = 'Species',
+        ylab = 'Body Mass (g)',
+        main = "Boxplot of Body Mass by Species of Delomys spp.")
+boxplot(delomys$body_mass ~ delomys$sex,
+        xlab = 'Sex',
+        ylab = 'Body Mass (g)',
+        main = "Boxplot of Body Mass by Sex of Delomys spp.")
+boxplot(delomys$body_mass ~ delomys$binomial * delomys$sex,
+        names = c("Female D. dorsalis", "Male D. dorsalis",
+                  "Female D. sublineatus", "Male D. sublineatus"),
+        xlab = "Species and Sex",
+        ylab = "Body Mass (g)",
+        main = "Boxplot of Body Mass by Species and Sex of Delomys spp.")
+}
+```
+
+## Graphical Data Analysis Conclusions
+
+### Qualitatively describe the relationship between body mass and length.
+
+The body length trends positively linear as body mass increases, as shown by the Delomy Body Mass vs. Body Length plot. It is a slow climb, but pengeuins weighing 20g are ~100cm in length, while those weighing 80g are ~150cm in length. 
+
+### Qualitatively describe the shapes of the histograms.
+
+The body_mass histogram is quite normal with a general bell curve shape, while the body_length histogram is a bit left skewed. This leads me to believe that the body_length element is likely not normal. 
+
+### Using both the histograms and normality tests, do you think the (unconditioned) body masses and body length are normally-distributed?
+
+In our shapiro.test() we determined that delomy body_mass and body_length are not normally distributed because the small p-values rejected the null hypothesis that they are normally distributed. This is in contrast to our histogram, where body_mass looks convincingly normal. I would make a judgement call here that because of how close the body_mass histogram is to being normal, we can ignore the shapiro tests and proceed assuming that it is normally distributed. I cannot say with confidence the same for body_length, which both failed the shapiro test and has a left skewed histogram. 
+
+### Examine the conditional boxplots. Describe any graphical evidence you see for body mass differences based on species and/or sex.
+
+Looking at the conditional boxplots, it seems that females on average weigh more than the males in both species. Additionally, though Delomys sublineatus are marginally larger on average than Delomys dorsalis - I think that because the two species look so similar in the conditional boxplots this may be hinting that there is not a strong factorial relationship present. They are so similar it is hard to see that sex and species together will be a strong predictor of body mass, though individually they obviously have a lot of merit. 
+
+# Models and ANOVA {.tabset .tabset-pills}
+## Model Building
+
+To generate a simple linear model to run an ANOVA (ANalysis Of VAriance), we can use the lm() function to create a linear fit for our data and then run the anova() function using it. 
+
+Model 1 predicts body length as a function of body mass, while the other models use the categorical variables binomial and sex to predict body mass.
+
+``` {r lm()}
+# Model 1: simple linear regression body_length ~ body_mass
+fit_1 = lm(body_length ~ body_mass, data = delomys)
+
+# Model 2: 1-way ANOVA body_mass ~ sex
+fit_2 = lm(body_mass ~ sex, data = delomys)
+
+# Model 3: 1-way ANOVA body_mass ~ binomial
+fit_3 = lm(body_mass ~ binomial, data = delomys)
+
+# Model 4: 2-way additive ANOVA body_mass ~ sex + binomial
+fit_4 = lm(body_mass ~ sex + binomial, data = delomys)
+
+# Model 5: 2-way factorial ANOVA body_mass ~ sex * binomial
+fit_5 = lm(body_mass ~ sex * binomial, data = delomys)
+```
+
+## Model Diagnostics {.tabset .tabset-pills}
+
+### Graphical Diagnostic
+
+Lets use a graphical approach to perform a model diagnostic visually by ploting histograms of the model residuals. This will tell us if the residuals are normally distributed or not, which is a big assumption made when using a Group 1 model such as a standard ANOVA.
+
+```{r fig.aspect=1/3}
+par(mfrow = c(2,3))
+hist(residuals(fit_1),
+     main = "fit_1 Residuals Diagnostic",
+     xlab = "fit_1 Residuals")
+hist(residuals(fit_2),
+     main = "fit_2 Residuals Diagnostic",
+     xlab = "fit_2 Residuals")
+hist(residuals(fit_3),
+     main = "fit_3 Residuals Diagnostic",
+     xlab = "fit_3 Residuals")
+hist(residuals(fit_4),
+     main = "fit_4 Residuals Diagnostic",
+     xlab = "fit_4 Residuals")
+hist(residuals(fit_5),
+     main = "fit_5 Residuals Diagnostic",
+     xlab = "fit_5 Residuals")
+```
+
+### Numerical Diagnostic
+
+Next, we can do a shapiro.test() on each model to test the null hypothesis that the residuals are drawn from a normally-distributed population.
+
+```{r}
+shapiro.test(residuals(fit_1))
+shapiro.test(residuals(fit_2))
+shapiro.test(residuals(fit_3))
+shapiro.test(residuals(fit_4))
+shapiro.test(residuals(fit_5))
+```
+
+### Diagnostic Conclusions
+#### What do you conclude about residual normality based on the numerical and graphical diagnostics?
+
+The shapiro test for the residuals of Model 1-5 are low, meaning that for the shapiro test we can reject the null hypothesis that the residauls of fit_1-5 are normal. But this isn't necessarily the be all end all - the histograms tell a far more convincing story than the shapiro test does in this case. 
+
+The residuals of fit_1 are graphically obvious to be not normal, while fits 2-5 are pretty normal in opposition to the shapiro results. This is similar to how we had to make a judgement call with the body_length and body_mass histograms and their associated shapiro tests. You cannot always rely solely on the shapiro test to determine if your data is normally distributed or not. We determined that the body_length variable is left skewed in an earlier histogram, and this may be the reason that the residuals of body_length ~ body_mass in fit_1 don't look normal based on the histogram. Meanwhile we determined that though the body_mass element failed the shapiro test, it's histogram was normal enough that we could make a judgement call that it was likely normal. This judgement reaffirmed itself in Models 2-5 which compare body_mass to sex and species and are consistently normal graphically.
+
+This leads me to believe that fit_1 is not normal, while fit_2-5 are normal based on the histograms - overriding the results of the shapiro test.
+
+#### Are violations of the normality assumption equally severe for all the models?
+
+No, because while body_mass is safely normal based on the histogram, body_length is much less convincing with a left skewed histogram and a failed shapiro test. This means that Model 1 which includes body_length is much more violated than Models 2-5 who don’t include body_length. This is apparent by the histogram of fit_1 residuals, which is anything but normal. Models 2-5 are very normal because body_mass is normal. 
+
+## Model Interpretation {.tabset .tabset-pills}
+### Model Coefficient Table Interpretation
+
+Model Coefficients & Model Summary Tables tell us the magnitude and sign of the slope parameters overall model significance test. Model coefficients can represent categorical and continuous variables!
+
+When R builds a model it selects one of the factor levels to serve as the ‘base case’, which is the (Intercept)
+when the model contains only categorical variables -  which means that the (Intercept) can be implied to be the mean of the other variable not shown! 
+
+- Everything is relative to the base case, with the estimate values for the other categories being the slopes, while the base case is the intercept
+
+- You can choose which factor level is the base case, but if you don’t r determines it alphabetically by default
+
+#### Body Length: Model Coefficients
+
+Print the model coefficient table using summary() and answer the following:
+``` {r coef body_length ~ body_mass}
+# Model 1: simple linear regression body_length ~ body_mass
+knitr::kable(coef(summary(fit_1)))
+```
+
+What is the magnitude of the mass/length relationship?
+
+- 0.87cm/g: this is because this is the slope for increasing body_length as body_mass increases by one gram.
+
+What is the expected body length of an an animal that weighs 100g?
+
+- 76.1246565cm + 0.8754988(100g)cm/g = 163.6745cm
+
+What is the expected body length of an animal that weighs 0g?
+
+- 76.1246565cm + 0.8754988(0g)cm/g = 76.1246565cm
+
+#### Body Mass: Model Coefficients
+
+The (Intercept) value is the mean of the base case variable, but to find the means of other categorical variables in this table you just have to add the estimate of the slope parameter to the (Intercept)!
+
+``` {r coef_mass_sex}
+# Model 2: body_mass ~ sex
+knitr::kable(coef(summary(fit_2)))
+```
+
+What is the base case for binomial?
+
+- Females are the base case which have a mean value = 42.711465g
+
+Which sex is heavier?
+
+- Male = 42.711465g + 2.784133g = 45.4956g
+  
+  - Male 45.4956g > Female 42.711465g
+  
+- Males are heavier!
+
+``` {r coef_binomial}
+# Model 3: body_mass ~ binomial
+knitr::kable(coef(summary(fit_3)))
+```
+
+What is the base case for binomial?
+
+- Delomys dorsalis are the base case, and has a mean value = 46.752427g
+
+Which species is heavier?
+
+- Delomys sublineatus = 46.752427g - 7.683058g = 39.06937g
+  
+  - Delomys dorsalis 46.752327g > Delomys sublineatus 39.06937g
+  
+- Delomys dorsalis is heavier!
+
+### ANOVA Table Interpretation
+ANOVA Table: shows us the model variability attributed to each factor, factor-specific significance tests. This tells us how strong each individual predictor variable is at explaining the entire model and it’s overall variability!
+
+ANOVA Table Interpretation
+
+- DOF: reflects the number of samples, number of factor levels, number of individuals per factor level etc.
+
+- Sum of Squares: reflects the total variability that is attributed to each of the different factors in our model
+
+- Mean squares: sum of squares normalized per degree of freedom, which allows us to make comparisons amongst factors!
+
+  - Sometimes Sum of Squares = Mean Squares because they have the same length, which means that normalization isn't required/doesn't do anything! (this is seen in Models 4 and 5)
+
+- F-Test: Test for ratio of variability explained by a particular predictor variable. To what degree does adding an individual factor improve our model as opposed to not including it
+
+- Pr(>F): If low, it means that overall the variable improves our ability to predict the output of the continuous variable than if they weren't present.
+
+F-Statistic Hypothesis
+
+- Null Hypothesis = treatment means are all the same
+
+  - big number = reject the null hypothesis
+    
+  - small number = fail to reject the null hypothesis
+  
+- Alt Hypothesis = at least one of the means is significantly different from the others.
+
+#### Body Mass: ANOVA {.tabset .tabset-pills}
+
+I will print the ANOVA tables for each of the body mass models (except Model 1) so we can use it as a reference for determining the best fit model.
+
+- Note: We do not include Model 1 because it doesn't compare more than one variable like Models 2-5 do with sex and species. 
+
+##### Model 2
+``` {r anova table 2}
+# Model 2: 1-way ANOVA body_mass ~ sex
+knitr::kable(anova(fit_2))
+```
+
+##### Model 3
+``` {r anova table 3}
+# Model 3: 1-way ANOVA body_mass ~ binomial
+knitr::kable(anova(fit_3))
+```
+
+##### Model 4
+``` {r anova table 4}
+# Model 4: 2-way additive ANOVA body_mass ~ sex + binomial
+knitr::kable(anova(fit_4))
+```
+
+##### Model 5
+``` {r anova table 5}
+# Model 5: 2-way factorial ANOVA body_mass ~ sex * binomial
+knitr::kable(anova(fit_5))
+```
+
+##### ANOVA Analysis Conclusions
+
+###### Are sex and species significant predictors for body mass?
+
+Yes they are! The p-values are both effectively 0, meaning that overall the variables improve our ability to predict the output of the continuous variable than if they weren't present!
+
+###### Is there a significant interaction?
+
+I would say no because in Model 5, the sex:binomial p-value is 0.95 which supports the null hypothesis that there is little to no contribution to the model. Additionally, the mean squares value is 7.913846e-01, as compared to sex and species which have mean square values in the thousands! This means that the factorial interaction of sex:species accounts for proportionately very little of the residual error present compared to sex and species individually.   
+
+###### Does the significance (as measured by p-value) of either of the main effects (sex and species) differ much between the single-predictor models, the additive model, and the interactive model?
+
+Not very much, the p-value for sex individually is 0.0001951, while it's 0.0001144 and 0.0001150 in Models 4 & 5 respectively. Additionally the p-value remains 0 for binomial in all models that include it!
+
+## Model Comparison: Body Mass
+Wee built four different models of body mass. How do you choose the best one?
+
+One option is to choose the model with the lowest AIC. You can calculate AIC using the appropriately named AIC() function for each model.
+
+``` {r AIC()}
+# Model 2: 1-way ANOVA body_mass ~ sex
+AIC(fit_2)
+
+# Model 3: 1-way ANOVA body_mass ~ binomial
+AIC(fit_3)
+
+# Model 4: 2-way additive ANOVA body_mass ~ sex + binomial
+AIC(fit_4)
+
+# Model 5: 2-way factorial ANOVA body_mass ~ sex * binomial
+AIC(fit_5)
+```
+
+Conclusion: Models 4 and 5 have the lowest AIC, with Model 4 being an additive ANOVA while Model 5 is a factorial ANOVA. 
+
+I would choose Model 4 (additive) because of our unconvincing interpretation of Model 5's (factorial) ANOVA table. Earlier we came to the conclusion that there is not a significant interaction between sex and species based on Model 5's ANOVA results. This was because the p-value for sex:binomial was high and it's mean squares value was low - which was not convincing to say that the the interaction of sex and species is a significant contributor to the model. The additive model on the other hand has exclusively low p-values that indicate their strong contribution to the model, alongside large mean square values that tell us that they account for much of the variability that was present without them.
+
+An additive model is comparitively much more simple and easy to understand than a factorial model which introduces an extra sex:binomial factor. Not only does an addition of more factors make the model more complex by default, this specific interaction is not easy to explain or prove with outside information. This is why I would opt for the additive Model 4 because of it's relative simplicity and convincing ANOVA results.
